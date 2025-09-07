@@ -77,6 +77,11 @@ For detailed information about the search syntax supported on each platform (Win
    - Download from https://www.voidtools.com/support/everything/sdk/
    - Extract the SDK files to a location on your system
 
+**Quick Setup (Recommended):**
+- Run `setup_everything.bat` (Command Prompt) or `setup_everything.ps1` (PowerShell)
+- Or use `python quick_start.py` for interactive setup
+- See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for detailed help
+
 ### Linux
 
 1. Install and initialize the `locate` or `plocate` command:
@@ -89,6 +94,41 @@ For detailed information about the search syntax supported on each platform (Win
 ### macOS
 
 No additional setup required. The server uses the built-in `mdfind` command.
+
+## Quick Start
+
+### Windows Users
+
+1. **Automatic Setup (Recommended):**
+   ```cmd
+   # Command Prompt
+   setup_everything.bat
+   
+   # PowerShell
+   .\setup_everything.ps1
+   ```
+
+2. **Interactive Setup:**
+   ```cmd
+   python quick_start.py
+   ```
+
+3. **Manual Setup:**
+   - Install [Everything](https://www.voidtools.com/)
+   - Set environment variable: `set EVERYTHING_SDK_PATH=C:\Program Files\Everything\Everything64.dll`
+   - Or edit `config.py` to add your DLL path
+
+### Test Configuration
+
+```cmd
+python config.py
+```
+
+### Start Server
+
+```cmd
+python -m mcp_server_everything_search
+```
 
 ## Installation
 

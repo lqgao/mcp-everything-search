@@ -96,7 +96,7 @@ Metadata Attributes:
 - kMDItemFSSize
 - And many more OS X metadata attributes""",
 
-            'linux': """Linux Locate Search Syntax:
+            'linux': r"""Linux Locate Search Syntax:
 
 Basic Usage:
 - Simple pattern: locate filename
@@ -115,7 +115,7 @@ Examples:
 - locate -r "/home/.*\.txt$"
 - locate -c "*.doc"
 """,
-            'windows': """Search for files and folders using Everything SDK.
+            'windows': r"""Search for files and folders using Everything SDK.
                 
 Features:
 - Fast file and folder search across all indexed drives

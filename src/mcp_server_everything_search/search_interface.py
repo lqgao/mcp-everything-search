@@ -195,10 +195,69 @@ class WindowsSearchProvider(SearchProvider):
     
     def __init__(self):
         """Initialize Everything SDK."""
+        import sys
         import os
+        
+        # Add the project root to the path to import config
+        project_root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+        if project_root not in sys.path:
+            sys.path.insert(0, project_root)
+        
+        try:
+            from config import find_everything_dll
+            dll_path = find_everything_dll()
+        except ImportError:
+            # Fallback if config.py is not available
+            from .everything_sdk import EverythingSDK
+            
+            # Try multiple possible DLL paths
+            possible_paths = [
+                # os.getenv('EVERYTHING_SDK_PATH'),  # Environment variable
+                # 'd:\\dropbox\\win\\EverythingDLL\\dll\\Everything64.dll',  # Default path
+                'C:\\Program Files\\Everything\\Everything64.dll',  # Program Files
+                'C:\\Program Files (x86)\\Everything\\Everything64.dll',  # Program Files (x86)
+                os.path.join(os.path.dirname(__file__), '..', '..', '..', 'Everything64.dll'),  # Relative to current file
+            ]
+            
+            dll_path = None
+            for path in possible_paths:
+                if path and os.path.exists(path):
+                    dll_path = path
+                    break
+            
+            if not dll_path:
+                # Try to find Everything in common locations
+                import glob
+                for pattern in [
+                    'C:\\Program Files\\Everything\\Everything*.dll',
+                    'C:\\Program Files (x86)\\Everything\\Everything*.dll',
+                    'D:\\*\\Everything-SDK\\dll\\Everything*.dll',
+                    'C:\\*\\Everything-SDK\\dll\\Everything*.dll'
+                ]:
+                    matches = glob.glob(pattern)
+                    if matches:
+                        dll_path = matches[0]
+                        break
+            
+            if not dll_path:
+                raise RuntimeError(
+                    "Everything SDK DLL not found. Please:\n"
+                    "1. Install Everything from https://www.voidtools.com/\n"
+                    "2. Or set EVERYTHING_SDK_PATH environment variable to the DLL path\n"
+                    "3. Or place Everything64.dll in the project directory\n"
+                    "Common locations:\n"
+                    "- C:\\Program Files\\Everything\\Everything64.dll\n"
+                    "- D:\\dev\\tools\\Everything-SDK\\dll\\Everything64.dll"
+                )
+        
         from .everything_sdk import EverythingSDK
-        dll_path = os.getenv('EVERYTHING_SDK_PATH', 'D:\\dev\\tools\\Everything-SDK\\dll\\Everything64.dll')
-        self.everything_sdk = EverythingSDK(dll_path)
+        try:
+            self.everything_sdk = EverythingSDK(dll_path)
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to initialize Everything SDK with DLL at {dll_path}: {e}\n"
+                "Please ensure the DLL is compatible with your Python version and architecture."
+            )
 
     def search_files(
         self,
